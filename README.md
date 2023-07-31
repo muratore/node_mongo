@@ -9,3 +9,11 @@ npm init -y
 ```js
 npm i nodemon express mongoose dotenv
 ```
+## 3. Criando o arquivo .gitignore
+
+
+# Conecção com o Mongodb
+
+### 1. Crie uma conta no Mongo Atlas
+link http://google.com.br
+
