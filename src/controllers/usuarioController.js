@@ -5,8 +5,16 @@ class UsuarioController {
     const { nome, idade, ativo, email } = req.body;
     const usuario = { nome, idade, ativo, email };
 
-    await Usuario.create(usuario);
-    res.status(201).json("usuario criado");
+    Object.keys(usuario).map(key =>{
+      if (!usuario[key]) {
+        res.status(422).json(`O campo ${key}, é vazio`)
+        // interrompe a criação, ou seja, abaixo do return nada será executado
+       return
+      }
+    })
+
+    const usuarioDB = await Usuario.create(usuario);
+    res.status(201).json({data: usuarioDB, msg: "usuario criado" });
   };
 
   static atualizarUsuario = async (req, res) => {
@@ -19,6 +27,9 @@ class UsuarioController {
 
   static excluirPorId = async (req, res) => {
     const id = req.params.id;
+    if(id){
+
+    }
     const nome = await Usuario.findOne({ _id: id }); //pega o objeto que será deletado da Entidade Usuario
     await Usuario.deleteOne({ _id: id });
     const date = moment(new Date()).format("DD/MM/YYY hh:mm:ss"); //retorna um log com a data da exclusao do usuario
@@ -26,14 +37,29 @@ class UsuarioController {
   };
 
   static buscarTodos = async (req, res) => {
+
     const usuarios = await Usuario.find();
     res.status(200).json(usuarios);
   };
 
   static buscarPorId = async (req, res) => {
     const id = req.params.id;
+
+    if(id.length < 24 || id.length > 24){
+      
+      res.status(422).json({msg: 'Tamanho inválido do Id'})
+      return
+    }
     const usuario = await Usuario.findOne({ _id: id });
-    res.status(200).json(usuario);
+    console.log(usuario);
+    if(!usuario){
+      res.status(422).json({msg: 'Usuário não encontrado'})
+      return
+    }
+
+      res.status(200).json(usuario);
+    
+  
   };
 }
 
